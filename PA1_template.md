@@ -31,7 +31,7 @@ When the data is loaded transform the character column date to date format
 ```r
 activity$date <- as.Date(activity$date,"%Y-%m-%d")
 ```
-## What is mean total number of steps taken per day?
+## What is the mean total number of steps taken per day?
 To answer this question I will explore the total number of steps per day. 
 I will start by calculating the total number of steps for each day in the dataset and store this in steps.per.day. I will then plot a histogram over the steps per day. Finally, we will look at the median and mean of the total number of steps per day.  
 
@@ -45,7 +45,7 @@ And the corresponding histogram looks like this:
 
 
 ```r
-qplot(totsteps, data=steps.per.day, bin=1000, xlab="Total steps", ylab="Number of days", main = "Total number of steps per day", col="ocean")
+qplot(totsteps, data=steps.per.day, bin=1000, xlab="Total steps", ylab="Number of days", main = "Total number of steps per day")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
@@ -214,6 +214,7 @@ ggplot(steps.per.daytype, aes(interval,meansteps))+geom_line(size=1, col="darkbl
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-14-1.png) 
+
 Yes, it seems that activity is distributed differently between weekdays and weekends. 
 
 
