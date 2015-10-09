@@ -187,8 +187,8 @@ The histogram for the total steps before and after imputation looks like this:
 
 ```r
 library(gridExtra)
-p1<-qplot(totsteps, data=steps.per.day, bin=1000, xlab="Total steps", ylab="Number of days", main = "Steps per day", col="coral")
-p2<-qplot(totsteps, data=steps.per.day2, bin=1000, xlab="Total steps", ylab="Number of days", main = "Steps per day, after imputation", col="coral")
+p1<-qplot(totsteps, data=steps.per.day, bin=1000, xlab="Total steps", ylab="Number of days", main = "Steps per day")
+p2<-qplot(totsteps, data=steps.per.day2, bin=1000, xlab="Total steps", ylab="Number of days", main = "Steps per day, after imputation")
 grid.arrange(p1, p2, ncol=2)
 ```
 
