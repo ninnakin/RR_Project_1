@@ -71,7 +71,7 @@ I then plot this as a function of the interval. From this plot it appears that t
 ggplot(data=steps.per.interval, aes(x=interval, y=meansteps))+geom_line(size=1, col="darkblue")+ggtitle("Mean number of steps per 5-minute interval")+xlab("Interval")+ylab("Steps")
 ```
 
-![plot of chunk plotIntervals](figure/plotIntervals-1.png) 
+![plot of chunk plot_steps_per_interval](figure/plot_steps_per_interval-1.png) 
 
 Identify the interval with the largest average number of steps:
 
