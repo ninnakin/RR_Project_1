@@ -68,7 +68,7 @@ steps.per.interval <-  activity %>% na.omit() %>% group_by(interval) %>% summari
 I then plot this as a function of the interval. From this plot it appears that the most active period is between interval 750 and 1000.
 
 ```r
-ggplot(data=steps.per.interval, aes(x=interval, y=meansteps))+geom_line(size=1, col="darkblue")+ggtitle("Mena number of steps per 5-minute interval")+xlab("Interval")+ylab("Steps")
+ggplot(data=steps.per.interval, aes(x=interval, y=meansteps))+geom_line(size=1, col="darkblue")+ggtitle("Mean number of steps per 5-minute interval")+xlab("Interval")+ylab("Steps")
 ```
 
 ![plot of chunk plotIntervals](figure/plotIntervals-1.png) 
@@ -86,7 +86,7 @@ steps.per.interval[steps.per.interval$meansteps==max(steps.per.interval$meanstep
 ##      (int)     (dbl)
 ## 1      835  206.1698
 ```
-So the interval is interval number 835 and the largest mean number of steps for an interval is 206
+So the most active interval is number 835 and the largest mean number of steps for an interval is 206
 
 ## Imputing missing values
 Some days and intervals don't have any recorded values for the steps. I will first investigate how common this is, and then impute values where missing to avoid data bias.
