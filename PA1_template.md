@@ -59,7 +59,7 @@ summary(steps.per.day$totsteps)[c("Mean","Median")]
 ## What is the average daily activity pattern?
 I will explore the daily activity pattern by plotting the average number of steps for each five minute period summed over the days in the experiment. We will investigate which five minute interval is the most active, i.e. has the largest average number of steps.
 
-I start by computing the total steps per interval and save this to the variable *steps.per.interval*
+I start by computing the mean number of steps per interval and save this to the variable *steps.per.interval*
 
 ```r
 steps.per.interval <-  activity %>% na.omit() %>% group_by(interval) %>% summarise(meansteps = mean(steps))
@@ -68,12 +68,12 @@ steps.per.interval <-  activity %>% na.omit() %>% group_by(interval) %>% summari
 I then plot this as a function of the interval. From this plot it appears that the most active period is between interval 750 and 1000.
 
 ```r
-ggplot(data=steps.per.interval, aes(x=interval, y=meansteps))+geom_line(size=1, col="darkblue")+ggtitle("Total steps per 5-minute interval")+xlab("Interval")+ylab("Steps")
+ggplot(data=steps.per.interval, aes(x=interval, y=meansteps))+geom_line(size=1, col="darkblue")+ggtitle("Mena number of steps per 5-minute interval")+xlab("Interval")+ylab("Steps")
 ```
 
 ![plot of chunk plotIntervals](figure/plotIntervals-1.png) 
 
-Identify the interval with the largest number of steps:
+Identify the interval with the largest average number of steps:
 
 ```r
 steps.per.interval[steps.per.interval$meansteps==max(steps.per.interval$meansteps),]
@@ -141,18 +141,21 @@ missing %>% group_by(interval) %>% count(date)
 ## 7 2012-11-14   288
 ## 8 2012-11-30   288
 ```
-2304 values are missing, this corresponds to 13% of the rows in the dataset. Values are missing from 8 different dates that each miss data for 288 intervals. 
+2304 values are missing, this corresponds to 13% of the rows in the dataset. Values are missing from 8 different dates that each miss data for all 288 intervals. 
 
 ### Impute values when missing
 The dates that miss data miss it for all intervals, so I can't use other data from the same date to impute information. Instead I will impute the mean number of steps for the missing interval. 
 
-Create the new dataset *activity2* by imputing the mean for the missing intervals.
+Create the new dataset *activity2* by imputing the mean for the missing intervals.I can use the already calculated means in *steps.per.interval*
 
 
 ```r
+# merge the dataset cotaining only dates with missing values with the dataset with the average number of steps by joining them on interval
 tmp<-merge(missing, steps.per.interval, x.by=interval, y.by=interval)
 activity2 <-merge(activity, tmp, by.x=c("interval", "date"), by.y=c("interval", "date"), all.x=TRUE, all.y=TRUE)
+# where number of steps missing, insert average number of steps 
 activity2$steps.x[is.na(activity2$steps.x)]=activity2$meansteps[is.na(activity2$steps.x)]
+# rename and exclude unused columns 
 activity2 <-rename(activity2 , steps=steps.x)
 activity2  <- select(activity2 , interval, date, steps)
 ```
