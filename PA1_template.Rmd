@@ -53,7 +53,7 @@ steps.per.interval <-  activity %>% na.omit() %>% group_by(interval) %>% summari
 ```
 
 I then plot this as a function of the interval. From this plot it appears that the most active period is between interval 750 and 1000.
-```{r plotIntervals}
+```{r plot_steps_per_interval}
 ggplot(data=steps.per.interval, aes(x=interval, y=meansteps))+geom_line(size=1, col="darkblue")+ggtitle("Mean number of steps per 5-minute interval")+xlab("Interval")+ylab("Steps")
 ```
 
