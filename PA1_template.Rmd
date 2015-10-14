@@ -21,7 +21,11 @@ activity <-  read.csv("activity/activity.csv", header=TRUE, na.strings = "NA", s
 
 When the data is loaded transform the character column *date* to date format
 ```{r setdate}
+#library(lubridate)
 activity$date <- as.Date(activity$date,"%Y-%m-%d")
+activity$interval <- sprintf("%04d",activity$interval)
+activity$interval <- as.POSIXct(strptime(activity$interval, format="%H%M"))
+
 ```
 ## What is the mean total number of steps taken per day?
 To answer this question I will explore the total number of steps per day. 
@@ -54,14 +58,14 @@ steps.per.interval <-  activity %>% na.omit() %>% group_by(interval) %>% summari
 
 I then plot this as a function of the interval. From this plot it appears that the most active period is between interval 750 and 1000.
 ```{r plot_steps_per_interval}
-ggplot(data=steps.per.interval, aes(x=interval, y=meansteps))+geom_line(size=1, col="darkblue")+ggtitle("Mean number of steps per 5-minute interval")+xlab("Interval")+ylab("Steps")
+ggplot(data=steps.per.interval, aes(x=interval, y=meansteps, group=1))+geom_line(size=1, col="darkblue")+ggtitle("Mean number of steps per 5-minute interval")+xlab("Interval")+ylab("Steps")+scale_x_datetime()
 ```
 
 Identify the interval with the largest average number of steps:
 ```{r MostActiveInterval}
 steps.per.interval[steps.per.interval$meansteps==max(steps.per.interval$meansteps),]
 ```
-So the most active interval is number 835 and the largest mean number of steps for an interval is 206
+So the most active interval is at 8:35 and the largest mean number of steps for an interval is 206
 
 ## Imputing missing values
 Some days and intervals don't have any recorded values for the steps. I will first investigate how common this is, and then impute values where missing to avoid data bias.
