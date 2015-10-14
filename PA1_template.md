@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 #  Report for project 1 in the reproducible research course
 
 ## Introduction
@@ -16,6 +11,26 @@ Load the data from the file activity assuming this file is placed in the folder 
 
 ```r
 library(dplyr)
+```
+
+```
+## Warning: package 'dplyr' was built under R version 3.2.2
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+## 
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+## 
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 library(ggplot2)
 activity <-  read.csv("activity/activity.csv", header=TRUE, na.strings = "NA", stringsAsFactors = FALSE)
 ```
@@ -23,7 +38,10 @@ activity <-  read.csv("activity/activity.csv", header=TRUE, na.strings = "NA", s
 When the data is loaded transform the character column *date* to date format
 
 ```r
+#library(lubridate)
 activity$date <- as.Date(activity$date,"%Y-%m-%d")
+activity$interval <- sprintf("%04d",activity$interval)
+activity$interval <- as.POSIXct(strptime(activity$interval, format="%H%M"))
 ```
 ## What is the mean total number of steps taken per day?
 To answer this question I will explore the total number of steps per day. 
@@ -42,7 +60,7 @@ And the corresponding histogram looks like this:
 ggplot(data=steps.per.day, aes(totsteps))+geom_histogram(binwidth=1000, fill="steelblue", col="darkblue")+ggtitle("Total number of steps per day")+xlab("Total steps")+ylab("Number of days")
 ```
 
-![plot of chunk stepshist](figure/stepshist-1.png) 
+![](PA1_template_files/figure-html/stepshist-1.png) 
 
 Both the mean and median number of total steps per day can be obtained by the summary function. 
 
@@ -68,10 +86,10 @@ steps.per.interval <-  activity %>% na.omit() %>% group_by(interval) %>% summari
 I then plot this as a function of the interval. From this plot it appears that the most active period is between interval 750 and 1000.
 
 ```r
-ggplot(data=steps.per.interval, aes(x=interval, y=meansteps))+geom_line(size=1, col="darkblue")+ggtitle("Mean number of steps per 5-minute interval")+xlab("Interval")+ylab("Steps")
+ggplot(data=steps.per.interval, aes(x=interval, y=meansteps, group=1))+geom_line(size=1, col="darkblue")+ggtitle("Mean number of steps per 5-minute interval")+xlab("Interval")+ylab("Steps")+scale_x_datetime()
 ```
 
-![plot of chunk plot_steps_per_interval](figure/plot_steps_per_interval-1.png) 
+![](PA1_template_files/figure-html/plot_steps_per_interval-1.png) 
 
 Identify the interval with the largest average number of steps:
 
@@ -82,11 +100,11 @@ steps.per.interval[steps.per.interval$meansteps==max(steps.per.interval$meanstep
 ```
 ## Source: local data frame [1 x 2]
 ## 
-##   interval meansteps
-##      (int)     (dbl)
-## 1      835  206.1698
+##              interval meansteps
+##                (time)     (dbl)
+## 1 2015-10-14 08:35:00  206.1698
 ```
-So the most active interval is number 835 and the largest mean number of steps for an interval is 206
+So the most active interval is at 8:35 and the largest mean number of steps for an interval is 206
 
 ## Imputing missing values
 Some days and intervals don't have any recorded values for the steps. I will first investigate how common this is, and then impute values where missing to avoid data bias.
@@ -177,7 +195,13 @@ The histogram for the total steps before and after imputation looks like this:
 
 ```r
 library(gridExtra)
+```
 
+```
+## Warning: package 'gridExtra' was built under R version 3.2.2
+```
+
+```r
 histdesign <- geom_histogram(binwidth=1000, fill="steelblue", col="darkblue")
 xlabel <- xlab("Total steps")
 ylabel <- ylab("Number of days")
@@ -186,7 +210,7 @@ p2 <- ggplot(data=steps.per.day2, aes(totsteps))+ histdesign + xlabel + ylabel +
 grid.arrange(p1, p2, nrow=2)
 ```
 
-![plot of chunk stepHist2](figure/stepHist2-1.png) 
+![](PA1_template_files/figure-html/stepHist2-1.png) 
 
 Imputing the mean number of steps for the interval in place of the missing data have changed the data so that more days now have the most common number of steps, i.e. the largest bar in the histogram have grown even larger.  
 
@@ -195,8 +219,8 @@ Add the factor variable *daytype* to the dataset to distinguish weekdays from we
 
 ```r
 activity2$daytype <- weekdays(activity2$date)
-activity2$daytype[!activity2$daytype %in% c("lördag","söndag")] <- "weekday"
-activity2$daytype[activity2$daytype %in% c("lördag","söndag")] <- "weekend"
+activity2$daytype[!activity2$daytype %in% c("lÃ¶rdag","sÃ¶ndag")] <- "weekday"
+activity2$daytype[activity2$daytype %in% c("lÃ¶rdag","sÃ¶ndag")] <- "weekend"
 activity2$daytype <- as.factor(activity2$daytype)
 ```
 
@@ -207,7 +231,7 @@ steps.per.daytype <-  activity2 %>% group_by(interval, daytype) %>% summarise(me
 ggplot(steps.per.daytype, aes(interval,meansteps))+geom_line(size=1, col="darkblue")+facet_wrap(~daytype, nrow=2)+ggtitle("Steps per interval for weekdays and weekends")
 ```
 
-![plot of chunk stepsPerDaytype](figure/stepsPerDaytype-1.png) 
+![](PA1_template_files/figure-html/stepsPerDaytype-1.png) 
 
 Yes, it seems that activity is distributed differently between weekdays and weekends. 
 
